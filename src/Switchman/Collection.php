@@ -28,7 +28,7 @@ use Switchman\Builder;
 use Switchman\Matcher;
 
 /**
- *
+ * @todo Use matcher key to identify which matcher matched.
  */
 final class Collection
 {

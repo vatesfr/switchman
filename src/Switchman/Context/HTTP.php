@@ -26,7 +26,7 @@ namespace Switchman\Context;
 use Switchman\Context;
 
 /**
- * @todo Use an error for the constructor.
+ * @todo Use an array for the constructor.
  */
 final class HTTP extends Context
 {
@@ -61,7 +61,7 @@ final class HTTP extends Context
 		$path   = null,    // null|string
 		$query  = null,    // null|string
 		$get_vars  = null, // null|array
-		$post_vars = null, // null|array
+		$post_vars = null  // null|array
 	)
 	{
 		parent::__construct(get_defined_vars());
