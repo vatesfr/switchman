@@ -43,20 +43,21 @@ final class HTTP extends Context
 		$path  = $_[0];
 		$query = isset($_[1]) ? $_[1] : null;
 
-		if ($logical)
+		if (!$logical)
 		{
-			if (isset($_SERVER['PATH_INFO']))
-			{
-				$path = $_SERVER['PATH_INFO'];
-			}
-			else
-			{
-				// Removes the current script directory.
-				$path = substr(
-					$path,
-					strrpos($_SERVER['PHP_SELF'], '/')
-				);
-			}
+			$base = null;
+		}
+		elseif (isset($_SERVER['PATH_INFO']))
+		{
+			$base = $_SERVER['PHP_SELF'];
+			$path = $_SERVER['PATH_INFO'];
+		}
+		else
+		{
+			$n = strrpos($_SERVER['PHP_SELF'], '/');
+
+			$base = substr($path, 0, $n); // Current script directory.
+			$path = substr($path, $n);    // Removes the current script directory.
 		}
 
 		return new self(
@@ -68,7 +69,7 @@ final class HTTP extends Context
 			$query,
 			$_GET,
 			$_POST,
-			$_FILES
+			$base
 		);
 	}
 
@@ -83,7 +84,8 @@ final class HTTP extends Context
 		$path   = null,    // null|string
 		$query  = null,    // null|string
 		$get_vars  = null, // null|array
-		$post_vars = null  // null|array
+		$post_vars = null, // null|array
+		$base_path = null  // null|string
 	)
 	{
 		parent::__construct(get_defined_vars());
