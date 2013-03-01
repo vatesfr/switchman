@@ -31,19 +31,41 @@ use Switchman\Context;
 final class HTTP extends Context
 {
 	/**
+	 * @param boolean $logical Whether to use the logical path instead
+	 *     of the real one. The logical path starts from the script's
+	 *     root and handles path info and mod rewrite.
+	 *
 	 * @return HTTP
 	 */
-	static function createFromGlobals()
+	static function createFromGlobals($logical = false)
 	{
-		$path_and_query = explode('?', $_SERVER['REQUEST_URI'], 2);
+		$_ = explode('?', $_SERVER['REQUEST_URI'], 2);
+		$path  = $_[0];
+		$query = isset($_[1]) ? $_[1] : null;
+
+		if ($logical)
+		{
+			if (isset($_SERVER['PATH_INFO']))
+			{
+				$path = $_SERVER['PATH_INFO'];
+			}
+			else
+			{
+				// Removes the current script directory.
+				$path = substr(
+					$path,
+					strrpos($_SERVER['PHP_SELF'], '/')
+				);
+			}
+		}
 
 		return new self(
 			isset($_SERVER['https']) || isset($_SERVER['HTTPS']),
 			$_SERVER['HTTP_HOST'],
 			$_SERVER['SERVER_PORT'],
 			$_SERVER['REQUEST_METHOD'],
-			$path_and_query[0],
-			isset($path_and_query[1]) ? $path_and_query[1] : '',
+			$path,
+			$query,
 			$_GET,
 			$_POST,
 			$_FILES
